@@ -2,8 +2,24 @@ import React, { Component } from 'react';
 import { NavLink, Switch, Route } from 'react-router-dom';
 import Home from '../home/HomeComponent';
 import AddProduct from '../products/AddProductComponent';
+import { fetchPermissions } from '../../services/permissionsService';
+import { addProperty } from '../../config';
 
 class NavComponent extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            canAddProduct: false
+        };
+    }
+
+    componentDidMount() {
+        fetchPermissions().then((permissions) => {
+            if (permissions.indexOf(addProperty) !== -1) {
+                this.setState({canAddProduct: true});
+            }
+        });
+    }
     render() {
         return(
             <div>
@@ -13,11 +29,13 @@ class NavComponent extends Component {
                         Home
                     </NavLink>
                     </li>
-                    <li>
-                    <NavLink activeClassName="active" to="/add">
-                        Add Product
-                    </NavLink>
-                    </li>
+                    {this.state.canAddProduct &&
+                        <li>
+                            <NavLink activeClassName="active" to="/add">
+                                Add Product
+                            </NavLink>
+                        </li>
+                    }
                 </ul>
                 <hr />
                 <Switch>
