@@ -4,6 +4,7 @@ import Home from '../home/HomeComponent';
 import AddProduct from '../products/AddProductComponent';
 import { fetchPermissions } from '../../services/permissionsService';
 import { addProperty } from '../../config';
+import './Nav.css';
 
 class NavComponent extends Component {
     constructor(props) {
@@ -23,7 +24,7 @@ class NavComponent extends Component {
     render() {
         return(
             <div>
-                <ul>
+                <ul className="horizontal">
                     <li>
                     <NavLink exact activeClassName="active" to="/">
                         Home
