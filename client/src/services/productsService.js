@@ -25,8 +25,7 @@ export const addProduct = (product) => {
       body: JSON.stringify(product),
       headers: {
         "Content-Type": "application/json"
-      },
-      credentials: "same-origin"
+      }
   }).then(response => {
       if (response.ok) {
         return true;
@@ -47,8 +46,24 @@ export const editProduct = (product) => {
       body: JSON.stringify(product),
       headers: {
         "Content-Type": "application/json"
-      },
-      credentials: "same-origin"
+      }
+  }).then(response => {
+      if (response.ok) {
+        return true;
+      } else {
+        const error = new Error('Error ' + response.status + ': ' + response.statusText);
+          throw error;
+      }
+    })
+  .catch((error) => {
+      console.error(error.message);
+      return false;
+  });
+};
+
+export const deleteProduct = (product) => {
+  return fetch(baseUrl + 'products/' + product.id, {
+      method: "DELETE"
   }).then(response => {
       if (response.ok) {
         return true;

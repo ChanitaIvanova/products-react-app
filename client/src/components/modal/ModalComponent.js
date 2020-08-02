@@ -8,6 +8,7 @@ class ModalComponent extends Component {
         this.state = {
             submitButton: this.props.submitButton || 'Submit',
             cancelButton: this.props.cancelButton || 'Cancel',
+            modalTitle: this.props.modalTitle || ''
         }
         this.handleClose = this.handleClose.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -29,7 +30,7 @@ class ModalComponent extends Component {
                     <div className="modal-dialog">
                         <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title">Modal title</h5>
+                            <h5 className="modal-title">{this.state.modalTitle}</h5>
                             <button type="button" className="close" aria-label="Close" onClick={this.handleClose}>
                             <span aria-hidden="true">&times;</span>
                             </button>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { fetchPermissions } from '../../services/permissionsService';
-import { fetchProducts, editProduct } from '../../services/productsService';
+import { fetchProducts, editProduct, deleteProduct } from '../../services/productsService';
 import { connect } from "react-redux";
 import { readProperty, editProperty, deleteProperty } from '../../config';
 import ModalComponent from '../modal/ModalComponent';
@@ -15,14 +15,19 @@ class HomeComponent extends Component {
             hasEditPermissions: false,
             hasDeletePermissions: false,
             openEdit: false,
+            openDelete: false,
             selectedProduct: undefined,
             updatedProduct: undefined,
-            failedToUpdate: false
+            failedToUpdate: false,
+            faledToDelete: false
         };
 
         this.openEdit = this.openEdit.bind(this);
+        this.openDelete = this.openDelete.bind(this);
         this.closeEditModal = this.closeEditModal.bind(this);
         this.submitEditModal = this.submitEditModal.bind(this);
+        this.closeDeleteModal = this.closeDeleteModal.bind(this);
+        this.submitDeleteModal = this.submitDeleteModal.bind(this);
         this.onProductChange = this.onProductChange.bind(this);
     }
 
@@ -42,12 +47,32 @@ class HomeComponent extends Component {
         })
     }
 
+    closeDeleteModal() {
+        this.setState({ openDelete: false });
+    }
+
+    submitDeleteModal() {
+        this.setState({ openDelete: false });
+        deleteProduct(this.state.selectedProduct).then((faledToDelete) => {
+            if (!faledToDelete) {
+                this.setState({faledToDelete: true})
+                return;
+            }
+            this.props.fetchProducts();
+
+        })
+    }
+
     onProductChange(product) {
         this.setState({updatedProduct: product})
     }
 
     openEdit(product) {
         this.setState({openEdit: true, selectedProduct: product});
+    }
+
+    openDelete(product) {
+        this.setState({openDelete: true, selectedProduct: product});
     }
 
     componentDidMount() {
@@ -89,6 +114,7 @@ class HomeComponent extends Component {
                 <td>{product.currency}</td>
                 { (this.state.hasEditPermissions || this.state.hasDeletePermissions) &&
                     <td>{ this.state.hasEditPermissions && <button onClick={() => this.openEdit(product)}>Edit</button>}
+                    { this.state.hasDeletePermissions && <button onClick={() => this.openDelete(product)}>Delete</button>}
                     </td>
                 }
             </tr>
@@ -112,11 +138,17 @@ class HomeComponent extends Component {
                     </tbody>
                 </table>
                 { this.state.openEdit && 
-                    <ModalComponent onClose={this.closeEditModal} onSubmit={this.submitEditModal} >
+                    <ModalComponent modalTitle={'Edit product'} onClose={this.closeEditModal} onSubmit={this.submitEditModal} >
                         <ProductFormComponent 
                         product={this.state.selectedProduct} 
                         displaySubmitButton={false}
                         onProductChange={this.onProductChange}/>
+                    </ModalComponent>
+                }
+
+                { this.state.openDelete && 
+                    <ModalComponent modalTitle={'Delete product'} onClose={this.closeDeleteModal} onSubmit={this.submitDeleteModal} submitButton={'Delete'}>
+                        <div>Are you sure you want to delete this product?</div>
                     </ModalComponent>
                 }
             </div>
