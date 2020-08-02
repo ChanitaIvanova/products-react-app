@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { addProduct } from '../../services/productsService';
-import { connect } from "react-redux";
+import ProductFormComponent from './ProductFormComponent';
 
-class AddProductComponent extends Component {
+class AddProduct extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -12,14 +12,13 @@ class AddProductComponent extends Component {
         };
 
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.addProduct = this.addProduct.bind(this);
     }
-    
-    handleSubmit(event) {
-        event.preventDefault();
-        console.log(this.state);
+
+    addProduct(product) {
+        console.log(product);
         this.setState({isLoading: true});
-        addProduct(this.state.product).then((isAdded) => {
+        addProduct(product).then((isAdded) => {
             this.setState({
                 product: {name: '', price: 0, currency: 'USD'},
                 isLoading: false,
@@ -28,7 +27,7 @@ class AddProductComponent extends Component {
         });
         
     }
-
+    
     handleChange(event) {
         this.setState({product: { ...this.state.product, [event.target.name]: event.target.value } });
     }
@@ -48,46 +47,13 @@ class AddProductComponent extends Component {
             <div>
                 <h1>Add Product</h1>
                 {message}
-                <form onSubmit={this.handleSubmit}>
-                    <label htmlFor="product-name">Name:</label>
-                    <input id="product-name" 
-                    type="text"
-                    name="name"
-                    value={this.state.product.name}
-                    onChange={this.handleChange}></input>
-
-                    <label htmlFor="product-price">Price:</label>
-                    <input id="product-price" 
-                    type="number"
-                    min="0.00" step="0.01"
-                    name="price"
-                    value={this.state.product.price}
-                    onChange={this.handleChange}></input>
-
-                    <label htmlFor="product-currency">Currency:</label>
-                    <select id="product-currency" 
-                    name="currency"
-                    value={this.state.product.currency}
-                    onChange={this.handleChange}>
-                        <option value="USD">USD</option>
-                        <option value="BGN">BGN</option>
-                    </select>
-                    <input type="submit" value="Submit"/>
-                </form>
+                <ProductFormComponent 
+                product={this.state.product} 
+                displaySubmitButton={true} 
+                handleSubmit={this.addProduct} />
             </div>
         )
     }
 }
-
-function mapDispatchToProps(dispatch) {
-    return {
-        addProduct: (product) => dispatch(addProduct(product))
-    };
-}
-
-const AddProduct = connect(
-    null,
-    mapDispatchToProps
-  )(AddProductComponent);
   
 export default AddProduct;
