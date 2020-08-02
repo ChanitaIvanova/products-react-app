@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import './Modal.css';
+import './Modal.scss';
 
 class ModalComponent extends Component {
     constructor(props) {
@@ -8,7 +8,8 @@ class ModalComponent extends Component {
         this.state = {
             submitButton: this.props.submitButton || 'Submit',
             cancelButton: this.props.cancelButton || 'Cancel',
-            modalTitle: this.props.modalTitle || ''
+            modalTitle: this.props.modalTitle || '',
+            submitBtnClass: this.props.submitBtnClass || 'default-btn'
         }
         this.handleClose = this.handleClose.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -39,8 +40,8 @@ class ModalComponent extends Component {
                             {this.props.children}
                         </div>
                         <div className="modal-footer">
-                            <button type="button" onClick={this.handleClose}>{this.state.cancelButton}</button>
-                            <button type="button" onClick={this.handleSubmit}>{this.state.submitButton}</button>
+                            <button className="default-btn" type="button" onClick={this.handleClose}>{this.state.cancelButton}</button>
+                            <button className={this.state.submitBtnClass} type="button" onClick={this.handleSubmit}>{this.state.submitButton}</button>
                         </div>
                         </div>
                     </div>

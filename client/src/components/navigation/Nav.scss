@@ -1,0 +1,25 @@
+@import '../../styles/colors.scss';
+ul {
+    &.horizontal {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #333;
+        
+        li {
+            float: left;
+            a {
+                display: block;
+                color: $color-white;
+                text-align: center;
+                padding: 1rem;
+                text-decoration: none;
+
+                &.active {
+                    background-color: $color-lightblue;
+                }
+            }
+        }
+    }
+}

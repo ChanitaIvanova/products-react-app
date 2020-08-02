@@ -113,8 +113,8 @@ class HomeComponent extends Component {
                 <td>{product.price}</td>
                 <td>{product.currency}</td>
                 { (this.state.hasEditPermissions || this.state.hasDeletePermissions) &&
-                    <td>{ this.state.hasEditPermissions && <button onClick={() => this.openEdit(product)}>Edit</button>}
-                    { this.state.hasDeletePermissions && <button onClick={() => this.openDelete(product)}>Delete</button>}
+                    <td>{ this.state.hasEditPermissions && <button className="primary-btn" onClick={() => this.openEdit(product)}>Edit</button>}
+                    { this.state.hasDeletePermissions && <button className="danger-btn" onClick={() => this.openDelete(product)}>Delete</button>}
                     </td>
                 }
             </tr>
@@ -138,7 +138,11 @@ class HomeComponent extends Component {
                     </tbody>
                 </table>
                 { this.state.openEdit && 
-                    <ModalComponent modalTitle={'Edit product'} onClose={this.closeEditModal} onSubmit={this.submitEditModal} >
+                    <ModalComponent 
+                    modalTitle={'Edit product'} 
+                    onClose={this.closeEditModal} 
+                    onSubmit={this.submitEditModal}
+                    submitBtnClass={'primary-btn'} >
                         <ProductFormComponent 
                         product={this.state.selectedProduct} 
                         displaySubmitButton={false}
@@ -147,7 +151,12 @@ class HomeComponent extends Component {
                 }
 
                 { this.state.openDelete && 
-                    <ModalComponent modalTitle={'Delete product'} onClose={this.closeDeleteModal} onSubmit={this.submitDeleteModal} submitButton={'Delete'}>
+                    <ModalComponent 
+                    modalTitle={'Delete product'} 
+                    onClose={this.closeDeleteModal} 
+                    onSubmit={this.submitDeleteModal} 
+                    submitButton={'Delete'}
+                    submitBtnClass={'danger-btn'}>
                         <div>Are you sure you want to delete this product?</div>
                     </ModalComponent>
                 }

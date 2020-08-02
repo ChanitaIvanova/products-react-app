@@ -4,7 +4,7 @@ import Home from '../home/HomeComponent';
 import AddProduct from '../products/AddProductComponent';
 import { fetchPermissions } from '../../services/permissionsService';
 import { addProperty } from '../../config';
-import './Nav.css';
+import './Nav.scss';
 
 class NavComponent extends Component {
     constructor(props) {
@@ -38,12 +38,13 @@ class NavComponent extends Component {
                         </li>
                     }
                 </ul>
-                <hr />
-                <Switch>
-                    <Route exact path="/" component={Home} />
-                    <Route exact path="/add" component={AddProduct}>
-                    </Route>
-                </Switch>
+                <div className="container">
+                    <Switch>
+                        <Route exact path="/" component={Home} />
+                        <Route exact path="/add" component={AddProduct}>
+                        </Route>
+                    </Switch>
+                </div>
             </div>
         )
     }

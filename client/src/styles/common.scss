@@ -1,0 +1,74 @@
+@import './colors.scss';
+
+.container {
+    padding: 2rem;
+}
+button {
+    padding: 0.5rem;
+    margin: 0.2rem;
+    border-radius: 10px;
+    font-weight: 700;
+
+    &.primary-btn {
+        color: $color-white;
+        background-color: $color-lightblue;
+    }
+
+    &.danger-btn {
+        color: $color-white;
+        background-color: #ff010dc7;
+    }
+
+    &.default-btn {
+        background-color: $color-gray;
+    }
+}
+
+%column-styles {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    thead {
+        color: $color-white;
+        background-color: $color-lightblue;
+    }
+
+    th {
+        @extend %column-styles;
+    }
+
+    td {
+        @extend %column-styles;
+    }
+
+    tr:nth-child(even) {
+        background-color: $color-gray;
+    }
+}
+
+%form-padding-and-width {
+    padding: 0.5rem;
+    width: 90%;
+}
+form {
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: $color-gray;
+    input[type=text], input[type=number] {
+        @extend %form-padding-and-width;
+    }
+
+    select {
+        padding: 0.5rem;
+    }
+
+    label {
+        @extend %form-padding-and-width;
+    }
+}

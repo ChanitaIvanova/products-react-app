@@ -32,7 +32,7 @@ class ProductFormComponent extends Component {
     }
     render() {
         return(
-            <form onSubmit={this.handleSubmit}>
+            <form >
                 <label htmlFor="product-name">Name:</label>
                 <input id="product-name" 
                 type="text"
@@ -56,7 +56,7 @@ class ProductFormComponent extends Component {
                     <option value="USD">USD</option>
                     <option value="BGN">BGN</option>
                 </select>
-                { this.state.displaySubmitButton && <input type="submit" value="Submit"/> }
+                { this.state.displaySubmitButton && <button className="primary-btn" onClick={this.handleSubmit}>Submit</button>}
             </form>
         )
     }
