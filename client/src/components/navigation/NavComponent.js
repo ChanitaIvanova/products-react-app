@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { NavLink, Switch, Route } from 'react-router-dom';
 import Home from '../home/HomeComponent';
-import AddProductComponent from '../products/AddProductComponent';
+import AddProduct from '../products/AddProductComponent';
 
 class NavComponent extends Component {
     render() {
@@ -22,7 +22,7 @@ class NavComponent extends Component {
                 <hr />
                 <Switch>
                     <Route exact path="/" component={Home} />
-                    <Route exact path="/add" component={AddProductComponent}>
+                    <Route exact path="/add" component={AddProduct}>
                     </Route>
                 </Switch>
             </div>

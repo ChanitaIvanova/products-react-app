@@ -18,3 +18,25 @@ export const fetchProducts = () => (dispatch) => {
         dispatch(addProducts([]));
     });
 };
+
+export const addProduct = (product) => {
+  return fetch(baseUrl + 'products', {
+      method: "POST",
+      body: JSON.stringify(product),
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "same-origin"
+  }).then(response => {
+      if (response.ok) {
+        return true;
+      } else {
+        const error = new Error('Error ' + response.status + ': ' + response.statusText);
+          throw error;
+      }
+    })
+  .catch((error) => {
+      console.error(error.message);
+      return false;
+  });
+};
