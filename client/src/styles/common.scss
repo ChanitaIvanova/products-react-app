@@ -1,10 +1,14 @@
 @import './colors.scss';
 
+%default-padding {
+    padding: 0.5rem;
+}
+
 .container {
     padding: 2rem;
 }
 button {
-    padding: 0.5rem;
+    @extend %default-padding;
     margin: 0.2rem;
     border-radius: 10px;
     font-weight: 700;
@@ -25,7 +29,7 @@ button {
 }
 
 %column-styles {
-    padding: 0.5rem;
+    @extend %default-padding;
     border: 1px solid #ddd;
 }
 table {
@@ -51,11 +55,12 @@ table {
 }
 
 %form-padding-and-width {
-    padding: 0.5rem;
+    @extend %default-padding;
     width: 90%;
+    margin: 0.2rem;
 }
 form {
-    padding: 0.5rem;
+    @extend %default-padding;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -65,7 +70,8 @@ form {
     }
 
     select {
-        padding: 0.5rem;
+        @extend %default-padding;
+        margin: 0.2rem;
     }
 
     label {

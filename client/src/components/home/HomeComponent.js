@@ -19,7 +19,8 @@ class HomeComponent extends Component {
             selectedProduct: undefined,
             updatedProduct: undefined,
             failedToUpdate: false,
-            faledToDelete: false
+            faledToDelete: false,
+            isUpdateFormValid: true
         };
 
         this.openEdit = this.openEdit.bind(this);
@@ -29,6 +30,7 @@ class HomeComponent extends Component {
         this.closeDeleteModal = this.closeDeleteModal.bind(this);
         this.submitDeleteModal = this.submitDeleteModal.bind(this);
         this.onProductChange = this.onProductChange.bind(this);
+        this.onFormValidationChange = this.onFormValidationChange.bind(this);
     }
 
     closeEditModal() {
@@ -36,6 +38,9 @@ class HomeComponent extends Component {
     }
 
     submitEditModal() {
+        if (!this.state.isUpdateFormValid) {
+            return;
+        }
         this.setState({ openEdit: false });
         editProduct(this.state.updatedProduct).then((isUpdated) => {
             if (!isUpdated) {
@@ -65,6 +70,10 @@ class HomeComponent extends Component {
 
     onProductChange(product) {
         this.setState({updatedProduct: product})
+    }
+
+    onFormValidationChange(isValid) {
+        this.setState({isUpdateFormValid: isValid})
     }
 
     openEdit(product) {
@@ -146,7 +155,8 @@ class HomeComponent extends Component {
                         <ProductFormComponent 
                         product={this.state.selectedProduct} 
                         displaySubmitButton={false}
-                        onProductChange={this.onProductChange}/>
+                        onProductChange={this.onProductChange}
+                        onFormValidationChange={this.onFormValidationChange}/>
                     </ModalComponent>
                 }
 

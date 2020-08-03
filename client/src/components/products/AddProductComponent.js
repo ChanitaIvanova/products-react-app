@@ -16,7 +16,6 @@ class AddProduct extends Component {
     }
 
     addProduct(product) {
-        console.log(product);
         this.setState({isLoading: true});
         addProduct(product).then((isAdded) => {
             this.setState({
