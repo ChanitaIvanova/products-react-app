@@ -3,12 +3,8 @@ import './ValidationBanner.scss';
 
 class ValidationBanner extends Component {
     render() {
-        if (!this.props.display) {
-            return null;
-        }
-
         return(
-            <span className="error-message">{this.props.errorMessage}</span>
+            <span className={"error-message " + (this.props.display ? "" : "hidden")}>{this.props.errorMessage}</span>
         )
     }
 }

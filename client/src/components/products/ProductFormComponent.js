@@ -14,6 +14,8 @@ class ProductFormComponent extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.validateForm = this.validateForm.bind(this);
+        this.validateName = this.validateName.bind(this);
+        this.validatePrice = this.validatePrice.bind(this);
     }
 
     handleSubmit(event) {
@@ -37,7 +39,7 @@ class ProductFormComponent extends Component {
         }
     }
 
-    validateForm() {
+    validateName() {
         let isValid = true;
         if (!this.state.product.name.trim()) {
             this.setState({isNameValid: false});
@@ -46,12 +48,39 @@ class ProductFormComponent extends Component {
             this.setState({isNameValid: true});
         }
 
+        if (this.props.onFormValidationChange) {
+            this.props.onFormValidationChange(isValid && this.state.isPriceValid);
+        }
+
+        return isValid;
+    }
+
+    validatePrice() {
+        let isValid = true;
         if (!this.state.product.price || this.state.product.price <= 0) {
             this.setState({isPriceValid: false});
-            isValid = false;
+            isValid =  false;
         } else {
             this.setState({isPriceValid: true});
         }
+        
+        if (this.props.onFormValidationChange) {
+            this.props.onFormValidationChange(isValid && this.state.isNameValid);
+        }
+
+        return isValid;
+    }
+
+    validateForm() {
+        let isValid = true;
+        if (!this.validateName()) {
+            isValid = false;
+        }
+
+        if (!this.validatePrice()) {
+            isValid = false;
+        }
+
         if (this.props.onFormValidationChange) {
             this.props.onFormValidationChange(isValid);
         }
@@ -66,7 +95,7 @@ class ProductFormComponent extends Component {
                 name="name"
                 value={this.state.product.name}
                 onChange={this.handleChange}
-                onBlur={this.validateForm}></input>
+                onBlur={this.validateName}></input>
                 <ValidationBanner display={!this.state.isNameValid}
                     errorMessage={'Please enter a name for the product!'}/>
 
@@ -77,7 +106,7 @@ class ProductFormComponent extends Component {
                 name="price"
                 value={this.state.product.price}
                 onChange={this.handleChange}
-                onBlur={this.validateForm}></input>
+                onBlur={this.validatePrice}></input>
                 <ValidationBanner display={!this.state.isPriceValid}
                     errorMessage={'The price should be larger than 0!'}/>
 

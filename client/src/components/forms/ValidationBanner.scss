@@ -4,4 +4,9 @@ span.error-message {
     color: $color-red;
     font-weight: 500;
     margin: 0.2rem;
+    line-height: 0.5rem;
+
+    &.hidden {
+        visibility: hidden;
+    }
 }
