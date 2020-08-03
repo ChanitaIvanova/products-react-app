@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Manage Products App",
+  "name": "Manage Products App",
   "icons": [
     {
       "src": "favicon.ico",
