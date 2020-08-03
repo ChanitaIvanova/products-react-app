@@ -44,7 +44,9 @@ class HomeComponent extends Component {
             return;
         }
         this.setState({ openEdit: false });
+        this.setState({ isLoading: true });
         editProduct(this.state.updatedProduct).then((isUpdated) => {
+            this.setState({ isLoading: false });
             if (!isUpdated) {
                 this.setState({failedToUpdate: true})
                 return;
@@ -60,7 +62,9 @@ class HomeComponent extends Component {
 
     submitDeleteModal() {
         this.setState({ openDelete: false });
+        this.setState({ isLoading: true });
         deleteProduct(this.state.selectedProduct).then((faledToDelete) => {
+            this.setState({ isLoading: false });
             if (!faledToDelete) {
                 this.setState({faledToDelete: true})
                 return;
@@ -79,7 +83,7 @@ class HomeComponent extends Component {
     }
 
     openEdit(product) {
-        this.setState({openEdit: true, selectedProduct: product});
+        this.setState({openEdit: true, selectedProduct: product, updatedProduct: product});
     }
 
     openDelete(product) {
@@ -98,24 +102,21 @@ class HomeComponent extends Component {
                 if (permissions.indexOf(deleteProperty) !== -1) {
                     this.setState({hasDeletePermissions: true});
                 }
-                return;
             }
-            // if the user does not have the READ permission
-            // remove the loading indicator
-            this.setState({isLoading: false})
+            this.setState({isLoading: false});
             
         });
     }
 
     render() {
-        if (this.state.isLoading && !this.props.products.areLoaded) {
+        if (this.state.isLoading || this.props.products.areLoading) {
             return (<LoadingBar/>);
         }
         if (!this.state.hasReadPermissions) {
-            return (<Message messageText={'You do not have permissions to view the list of products'} level={'failed'}/>);
+            return (<Message messageText={'You do not have permissions to view the list of products!'} level={'failed'}/>);
         }
         if ( this.props.products.products.length === 0) {
-            return (<Message messageText={'There are no products available'}/>);
+            return (<Message messageText={'There are no available products.'}/>);
         }
         
         const tableRows = this.props.products.products.map((product) =>

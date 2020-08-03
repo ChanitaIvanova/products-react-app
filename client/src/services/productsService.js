@@ -1,7 +1,8 @@
 import { baseUrl } from '../config';
-import { addProducts } from '../state/products/productsActions';
+import { receiveProducts, requestProducts } from '../state/products/productsActions';
 
 export const fetchProducts = () => (dispatch) => {
+    dispatch(requestProducts())
     return fetch(baseUrl + 'products')
     .then(response => {
         if (response.ok) {
@@ -12,10 +13,10 @@ export const fetchProducts = () => (dispatch) => {
         }
       })
     .then(response => response.json())
-    .then(products => dispatch(addProducts(products)))
+    .then(products => dispatch(receiveProducts(products)))
     .catch((error) => {
         console.error(error.message);
-        dispatch(addProducts([]));
+        dispatch(receiveProducts([]));
     });
 };
 

@@ -1,10 +1,11 @@
-import { ADD_PRODUCTS } from '../actionTypes';
+import { REQUEST_PRODUCTS, RECEIVE_PRODUCTS } from '../actionTypes';
 
-export const Products = (state = { products: [], areLoaded: false }, action) => {
+export const Products = (state = { products: [], areLoading: false }, action) => {
   switch (action.type) {
-      case ADD_PRODUCTS:
-          return {...state, products: action.payload, areLoaded: true};
-
+      case RECEIVE_PRODUCTS:
+          return {...state, products: action.payload, areLoading: false};
+      case REQUEST_PRODUCTS:
+        return {...state, areLoading: true};
       default:
           return state;
   }
