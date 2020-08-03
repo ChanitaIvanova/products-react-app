@@ -11,7 +11,7 @@ class LoadingBar extends Component {
     render() {
         return(
             <div className="loader-container">
-                <div className={`loader ${this.state.size}`}></div>
+                <div className={`loader ${this.state.size}`} title="Loading"></div>
             </div>
         )
     }
