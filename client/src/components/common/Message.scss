@@ -1,0 +1,25 @@
+div.message-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    margin: 0.2rem;
+    border-radius: 10px;
+    font-weight: 700;
+
+    &.info {
+        background-color: #0066ff40;
+    }
+
+    &.warning {
+        background-color: #ffc8006e;
+    }
+
+    &.success {
+        background-color: #45b52170;
+    }
+
+    &.failed {
+        background-color: #ff000080;
+    }
+}

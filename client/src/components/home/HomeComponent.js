@@ -5,6 +5,8 @@ import { connect } from "react-redux";
 import { readProperty, editProperty, deleteProperty } from '../../config';
 import ModalComponent from '../modal/ModalComponent';
 import ProductFormComponent from '../products/ProductFormComponent';
+import LoadingBar from '../common/LoadingBarComponent';
+import Message from '../common/MessageComponent';
 
 class HomeComponent extends Component {
     constructor(props) {
@@ -107,13 +109,13 @@ class HomeComponent extends Component {
 
     render() {
         if (this.state.isLoading && !this.props.products.areLoaded) {
-            return (<div>Loading</div>);
+            return (<LoadingBar/>);
         }
         if (!this.state.hasReadPermissions) {
-            return (<div>You do not have permissions to view the list of products</div>);
+            return (<Message messageText={'You do not have permissions to view the list of products'} level={'failed'}/>);
         }
         if ( this.props.products.products.length === 0) {
-            return (<div>There are no products available</div>);
+            return (<Message messageText={'There are no products available'}/>);
         }
         
         const tableRows = this.props.products.products.map((product) =>

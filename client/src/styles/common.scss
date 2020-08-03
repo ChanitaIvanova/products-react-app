@@ -12,6 +12,7 @@ button {
     margin: 0.2rem;
     border-radius: 10px;
     font-weight: 700;
+    cursor: pointer;
 
     &.primary-btn {
         color: $color-white;

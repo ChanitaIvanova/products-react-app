@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { addProduct } from '../../services/productsService';
 import ProductFormComponent from './ProductFormComponent';
+import LoadingBar from '../common/LoadingBarComponent';
+import Message from '../common/MessageComponent';
 
 class AddProduct extends Component {
     constructor(props) {
@@ -32,15 +34,15 @@ class AddProduct extends Component {
     }
     render() {
         if (this.state.isLoading) {
-            return (<div>Loading</div>);
+            return (<LoadingBar/>);
         }
         let message;
         if (this.state.isAdded) {
-            message = (<div>The product was added</div>);
+            message = (<Message messageText={'The product was added'} level={'success'}/>);
         }
 
         if (this.state.isAdded === false) {
-            message = (<div>There was an issue when adding the product</div>);
+            message = (<Message messageText={'Failed to add the product'} level={'failed'}/>);
         }
         return(
             <div>
