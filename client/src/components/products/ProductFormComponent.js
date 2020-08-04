@@ -18,19 +18,29 @@ class ProductFormComponent extends Component {
         this.validatePrice = this.validatePrice.bind(this);
     }
 
+    /**
+     * WHEN the form's submit button is enabled (displaySubmitButton is set to true)
+     * this is the handler that checks if the form is valid and only if it is
+     * it calls the provided call back handleSubmit through the properties
+     * Lastly after the submit the form fields are reset
+     * @param {Event} event 
+     */
     handleSubmit(event) {
         event.preventDefault();
         if (!this.validateForm()) {
             return;
         }
-        this.setState({isLoading: true});
         this.props.handleSubmit(this.state.product);
         this.setState({
             product: this.props.product
         });
-        
     }
 
+    /**
+     * Set the new product to the change and if onProductChange is provided, pass the new 
+     * product to the parent component
+     * @param {Event} event 
+     */
     handleChange(event) {
         const newProduct = { ...this.state.product, [event.target.name]: event.target.value } ;
         this.setState({product: newProduct});
@@ -71,6 +81,11 @@ class ProductFormComponent extends Component {
         return isValid;
     }
 
+    /**
+     * Returns true if both the name and the price have valid values
+     * If onFormValidationChange is provided pass the valididty status
+     * to the parent component 
+     */
     validateForm() {
         let isValid = true;
         if (!this.validateName()) {
@@ -86,6 +101,7 @@ class ProductFormComponent extends Component {
         }
         return isValid;
     }
+    
     render() {
         return(
             <form>
