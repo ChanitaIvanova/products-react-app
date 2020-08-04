@@ -8,7 +8,7 @@ import ProductFormComponent from '../products/ProductFormComponent';
 import LoadingBar from '../common/LoadingBarComponent';
 import Message from '../common/MessageComponent';
 
-class HomeComponent extends Component {
+export class HomeComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -20,8 +20,6 @@ class HomeComponent extends Component {
             openDelete: false,
             selectedProduct: undefined,
             updatedProduct: undefined,
-            failedToUpdate: false,
-            faledToDelete: false,
             isUpdateFormValid: true
         };
 
@@ -35,10 +33,27 @@ class HomeComponent extends Component {
         this.onFormValidationChange = this.onFormValidationChange.bind(this);
     }
 
+    /**
+     * Sets the openEdit flag to true to mark the Edit modal as open
+     * sets the selectedProduct and updatedProduct in the scope
+     * @param {name: string, price: number, currency: string} product 
+     */
+    openEdit(product) {
+        this.setState({openEdit: true, selectedProduct: product, updatedProduct: product});
+    }
+
+    /**
+     * Sets the openEdit flag to false to mark the Edit modal as closed
+     */
     closeEditModal() {
         this.setState({ openEdit: false });
     }
 
+    /**
+     * When the data in the dialog is not valid - nothing happens
+     * When the data is valid, closes the modal,
+     * shows loading indicator, updates the product and fecthes the products again
+     */
     submitEditModal() {
         if (!this.state.isUpdateFormValid) {
             return;
@@ -48,25 +63,39 @@ class HomeComponent extends Component {
         editProduct(this.state.updatedProduct).then((isUpdated) => {
             this.setState({ isLoading: false });
             if (!isUpdated) {
-                this.setState({failedToUpdate: true})
                 return;
             }
             this.props.fetchProducts();
 
-        })
+        });
     }
 
+    /**
+     * Sets the openDelete flag to true to mark the Delete product modal as open
+     * sets the selectedProduct
+     * @param {name: string, price: number, currency: string} product 
+     */
+    openDelete(product) {
+        this.setState({openDelete: true, selectedProduct: product});
+    }
+
+    /**
+     * Sets the openDelete flag to false to mark the Delet product modal as closed
+     */
     closeDeleteModal() {
         this.setState({ openDelete: false });
     }
 
+    /**
+     * Ccloses the modal, shows loading indicator,
+     * deltes the product and fecthes the products again
+     */
     submitDeleteModal() {
         this.setState({ openDelete: false });
         this.setState({ isLoading: true });
         deleteProduct(this.state.selectedProduct).then((faledToDelete) => {
             this.setState({ isLoading: false });
             if (!faledToDelete) {
-                this.setState({faledToDelete: true})
                 return;
             }
             this.props.fetchProducts();
@@ -80,14 +109,6 @@ class HomeComponent extends Component {
 
     onFormValidationChange(isValid) {
         this.setState({isUpdateFormValid: isValid})
-    }
-
-    openEdit(product) {
-        this.setState({openEdit: true, selectedProduct: product, updatedProduct: product});
-    }
-
-    openDelete(product) {
-        this.setState({openDelete: true, selectedProduct: product});
     }
 
     componentDidMount() {

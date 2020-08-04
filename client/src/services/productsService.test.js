@@ -1,7 +1,7 @@
 import { baseUrl } from '../config';
 import { fetchProducts, addProduct, editProduct, deleteProduct } from './productsService';
-import configureMockStore from 'redux-mock-store'
-import thunk from 'redux-thunk'
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
 import { RECEIVE_PRODUCTS, REQUEST_PRODUCTS } from '../state/actionTypes';
 
 const middlewares = [thunk]
