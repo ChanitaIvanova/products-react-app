@@ -13,7 +13,6 @@ class AddProduct extends Component {
             isAdded: undefined
         };
 
-        this.handleChange = this.handleChange.bind(this);
         this.addProduct = this.addProduct.bind(this);
     }
 
@@ -29,9 +28,6 @@ class AddProduct extends Component {
         
     }
     
-    handleChange(event) {
-        this.setState({product: { ...this.state.product, [event.target.name]: event.target.value } });
-    }
     render() {
         if (this.state.isLoading) {
             return (<LoadingBar/>);
