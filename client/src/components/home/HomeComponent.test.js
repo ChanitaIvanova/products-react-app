@@ -94,7 +94,7 @@ describe('HomeComponent', () => {
             it('requests the products and sets hasReadPermissions to true', () => {
                 const mockProps = {
                     fetchProducts: jest.fn(),
-                    products: {areLoading: true}
+                    areLoading: true
                 };
                 const wrapper = shallow(
                     <HomeComponent {...mockProps}/>
@@ -110,7 +110,8 @@ describe('HomeComponent', () => {
             it ('lists the products with no actions', () => {
                 const mockProps = {
                     fetchProducts: jest.fn(),
-                    products: {areLoading: false, products: products}
+                    areLoading: false, 
+                    products: products
                 };
                 const wrapper = shallow(
                     <HomeComponent {...mockProps}/>
@@ -152,7 +153,7 @@ describe('HomeComponent', () => {
             it('requests the products and sets hasReadPermissions and hasEditPermissions to true', () => {
                 const mockProps = {
                     fetchProducts: jest.fn(),
-                    products: {areLoading: true}
+                    areLoading: true
                 };
                 const wrapper = shallow(
                     <HomeComponent {...mockProps}/>
@@ -169,7 +170,8 @@ describe('HomeComponent', () => {
             it ('lists the products with only edit action', () => {
                 const mockProps = {
                     fetchProducts: jest.fn(),
-                    products: {areLoading: false, products: products}
+                    areLoading: false, 
+                    products: products
                 };
                 const wrapper = shallow(
                     <HomeComponent {...mockProps}/>
@@ -213,7 +215,8 @@ describe('HomeComponent', () => {
                 it ('opens the dialog and initializes selectedProduct and updatedProduct', () => {
                     const mockProps = {
                         fetchProducts: jest.fn(),
-                        products: {areLoading: false, products: products}
+                        areLoading: false, 
+                        products: products
                     };
                     const wrapper = shallow(
                         <HomeComponent {...mockProps}/>
@@ -238,7 +241,8 @@ describe('HomeComponent', () => {
                     beforeEach(() => {
                         mockProps = {
                             fetchProducts: jest.fn(),
-                            products: {areLoading: false, products: products}
+                            areLoading: false, 
+                            products: products
                         };
                         wrapper = shallow(
                             <HomeComponent {...mockProps}/>
@@ -336,7 +340,7 @@ describe('HomeComponent', () => {
             it('requests the products and sets hasReadPermissions and hasDeletePermissions to true', () => {
                 const mockProps = {
                     fetchProducts: jest.fn(),
-                    products: {areLoading: true}
+                    areLoading: true
                 };
                 const wrapper = shallow(
                     <HomeComponent {...mockProps}/>
@@ -353,7 +357,8 @@ describe('HomeComponent', () => {
             it ('lists the products with only delete action', () => {
                 const mockProps = {
                     fetchProducts: jest.fn(),
-                    products: {areLoading: false, products: products}
+                    areLoading: false, 
+                    products: products
                 };
                 const wrapper = shallow(
                     <HomeComponent {...mockProps}/>
@@ -397,7 +402,8 @@ describe('HomeComponent', () => {
                 it ('opens the dialog and initializes selectedProduct', () => {
                     const mockProps = {
                         fetchProducts: jest.fn(),
-                        products: {areLoading: false, products: products}
+                        areLoading: false, 
+                        products: products
                     };
                     const wrapper = shallow(
                         <HomeComponent {...mockProps}/>
@@ -421,7 +427,8 @@ describe('HomeComponent', () => {
                     beforeEach(() => {
                         mockProps = {
                             fetchProducts: jest.fn(),
-                            products: {areLoading: false, products: products}
+                            areLoading: false, 
+                            products: products
                         };
                         wrapper = shallow(
                             <HomeComponent {...mockProps}/>

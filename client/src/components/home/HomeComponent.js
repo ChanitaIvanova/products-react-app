@@ -87,7 +87,7 @@ export class HomeComponent extends Component {
     }
 
     /**
-     * Ccloses the modal, shows loading indicator,
+     * Closes the modal, shows loading indicator,
      * deltes the product and fecthes the products again
      */
     submitDeleteModal() {
@@ -99,16 +99,15 @@ export class HomeComponent extends Component {
                 return;
             }
             this.props.fetchProducts();
-
-        })
+        });
     }
 
     onProductChange(product) {
-        this.setState({updatedProduct: product})
+        this.setState({updatedProduct: product});
     }
 
     onFormValidationChange(isValid) {
-        this.setState({isUpdateFormValid: isValid})
+        this.setState({isUpdateFormValid: isValid});
     }
 
     componentDidMount() {
@@ -125,22 +124,21 @@ export class HomeComponent extends Component {
                 }
             }
             this.setState({isLoading: false});
-            
         });
     }
 
     render() {
-        if (this.state.isLoading || this.props.products.areLoading) {
+        if (this.state.isLoading || this.props.areLoading) {
             return (<LoadingBar/>);
         }
         if (!this.state.hasReadPermissions) {
             return (<Message messageText={'You do not have permissions to view the list of products!'} level={'failed'}/>);
         }
-        if ( this.props.products.products.length === 0) {
+        if ( this.props.products.length === 0) {
             return (<Message messageText={'There are no available products.'}/>);
         }
         
-        const tableRows = this.props.products.products.map((product) =>
+        const tableRows = this.props.products.map((product) =>
             <tr key={product.id}>
                 <td>{product.name}</td>
                 <td>{product.price}</td>
@@ -202,6 +200,7 @@ export class HomeComponent extends Component {
 const mapStateToProps = state => {
     return {
       products: state.products,
+      areLoading: state.areLoading
     }
   }
   

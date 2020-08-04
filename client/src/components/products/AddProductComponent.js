@@ -8,7 +8,7 @@ class AddProduct extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            product: {name: '', price: 0, currency: 'USD'},
+            product: {name: '', price: 0.00, currency: 'USD'},
             isLoading: false,
             isAdded: undefined
         };
@@ -20,7 +20,7 @@ class AddProduct extends Component {
         this.setState({isLoading: true});
         addProduct(product).then((isAdded) => {
             this.setState({
-                product: {name: '', price: 0, currency: 'USD'},
+                product: {name: '', price: 0.00, currency: 'USD'},
                 isLoading: false,
                 isAdded: isAdded
             });

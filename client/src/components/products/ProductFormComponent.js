@@ -16,6 +16,7 @@ class ProductFormComponent extends Component {
         this.validateForm = this.validateForm.bind(this);
         this.validateName = this.validateName.bind(this);
         this.validatePrice = this.validatePrice.bind(this);
+        this.formatPrice = this.formatPrice.bind(this);
     }
 
     /**
@@ -67,7 +68,7 @@ class ProductFormComponent extends Component {
 
     validatePrice() {
         let isValid = true;
-        if (!this.state.product.price || this.state.product.price <= 0) {
+        if (!this.state.product.price || this.state.product.price <= 0 || isNaN(this.state.product.price)) {
             this.setState({isPriceValid: false});
             isValid =  false;
         } else {
@@ -79,6 +80,15 @@ class ProductFormComponent extends Component {
         }
 
         return isValid;
+    }
+
+    formatPrice() {
+        const newPrice = parseFloat(this.state.product.price).toFixed(2);
+        const newProduct = { ...this.state.product, price: newPrice };
+        this.setState({product: newProduct});
+        if (this.props.onProductChange) {
+            this.props.onProductChange(newProduct);
+        }
     }
 
     /**
@@ -122,7 +132,7 @@ class ProductFormComponent extends Component {
                 name="price"
                 value={this.state.product.price}
                 onChange={this.handleChange}
-                onBlur={this.validatePrice}></input>
+                onBlur={() => {this.validatePrice(); this.formatPrice();}}></input>
                 <ValidationBanner display={!this.state.isPriceValid}
                     errorMessage={'The price should be larger than 0!'}/>
 
