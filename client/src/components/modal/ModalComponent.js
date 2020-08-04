@@ -59,8 +59,8 @@ class ModalComponent extends Component {
     }
     
     render() {
-          return null;
-        }
+        return null;
+    }
 }
 
 export default ModalComponent;
