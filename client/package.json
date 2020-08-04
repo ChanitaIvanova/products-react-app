@@ -31,7 +31,9 @@
     ],
     "development": [
       "last 1 chrome version",
-      "last 1 firefox version"
+      "last 1 firefox version",
+      "not dead",
+      "ie 11"
     ]
   },
   "babel": {

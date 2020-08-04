@@ -21,7 +21,8 @@ button {
 
     &.danger-btn {
         color: $color-white;
-        background-color: #ff010dc7;
+        background-color: #ff010d;
+        opacity: 0.8;
     }
 
     &.default-btn {
