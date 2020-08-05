@@ -6,16 +6,16 @@ class Message extends Component {
         super(props);
         this.state = {
             level: this.props.level || 'info',
-            messageText: this.props.messageText || ''
-        }
+            messageText: this.props.messageText || '',
+        };
     }
     render() {
-        return(
+        return (
             <div className={`message-container ${this.state.level}`}>
                 <span>{this.state.messageText}</span>
             </div>
-        )
+        );
     }
 }
-  
+
 export default Message;

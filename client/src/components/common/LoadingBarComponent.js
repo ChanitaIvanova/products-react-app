@@ -5,16 +5,19 @@ class LoadingBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            size: this.props.size || 'large'
-        }
+            size: this.props.size || 'large',
+        };
     }
     render() {
-        return(
-            <div className="loader-container">
-                <div className={`loader ${this.state.size}`} title="Loading"></div>
+        return (
+            <div className='loader-container'>
+                <div
+                    className={`loader ${this.state.size}`}
+                    title='Loading'
+                ></div>
             </div>
-        )
+        );
     }
 }
-  
+
 export default LoadingBar;

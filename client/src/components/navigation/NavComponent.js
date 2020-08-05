@@ -10,43 +10,42 @@ class NavComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            canAddProduct: false
+            canAddProduct: false,
         };
     }
 
     componentDidMount() {
         fetchPermissions().then((permissions) => {
             if (permissions.indexOf(addProperty) !== -1) {
-                this.setState({canAddProduct: true});
+                this.setState({ canAddProduct: true });
             }
         });
     }
     render() {
-        return(
+        return (
             <div>
-                <ul className="horizontal">
+                <ul className='horizontal'>
                     <li>
-                    <NavLink exact activeClassName="active" to="/">
-                        Home
-                    </NavLink>
+                        <NavLink exact activeClassName='active' to='/'>
+                            Home
+                        </NavLink>
                     </li>
-                    {this.state.canAddProduct &&
+                    {this.state.canAddProduct && (
                         <li>
-                            <NavLink activeClassName="active" to="/add">
+                            <NavLink activeClassName='active' to='/add'>
                                 Add Product
                             </NavLink>
                         </li>
-                    }
+                    )}
                 </ul>
-                <div className="container">
+                <div className='container'>
                     <Switch>
-                        <Route exact path="/" component={Home} />
-                        <Route exact path="/add" component={AddProduct}>
-                        </Route>
+                        <Route exact path='/' component={Home} />
+                        <Route exact path='/add' component={AddProduct}></Route>
                     </Switch>
                 </div>
             </div>
-        )
+        );
     }
 }
 
