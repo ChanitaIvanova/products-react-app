@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { fetchPermissions } from '../../services/permissionsService';
 import { fetchProducts, editProduct, deleteProduct } from '../../services/productsService';
 import { connect } from "react-redux";
-import { readProperty, editProperty, deleteProperty } from '../../config';
+import { readProperty, editProperty, deleteProperty } from '../../services/permissions.constants';
 import ModalComponent from '../modal/ModalComponent';
 import ProductFormComponent from '../products/ProductFormComponent';
 import LoadingBar from '../common/LoadingBarComponent';

@@ -3,7 +3,7 @@ import { NavLink, Switch, Route } from 'react-router-dom';
 import Home from '../home/HomeComponent';
 import AddProduct from '../products/AddProductComponent';
 import { fetchPermissions } from '../../services/permissionsService';
-import { addProperty } from '../../config';
+import { addProperty } from '../../services/permissions.constants';
 import './Nav.scss';
 
 class NavComponent extends Component {
