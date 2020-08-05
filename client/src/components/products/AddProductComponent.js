@@ -1,66 +1,55 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { addProduct } from '../../services/productsService';
 import ProductFormComponent from './ProductFormComponent';
 import LoadingBar from '../common/LoadingBarComponent';
 import Message from '../common/MessageComponent';
 
-class AddProduct extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            product: { name: '', price: 0.0, currency: 'USD' },
-            isLoading: false,
-            isAdded: undefined,
-        };
+const AddProduct = () => {
+    const [product, setProduct] = useState({
+        name: '',
+        price: 0.0,
+        currency: 'USD',
+    });
+    const [isLoading, setIsLoading] = useState(false);
+    const [isAdded, setIsAdded] = useState();
 
-        this.addProduct = this.addProduct.bind(this);
-    }
-
-    addProduct(product) {
-        this.setState({ isLoading: true });
+    const handleSubmit = (product) => {
+        setIsLoading(true);
         addProduct(product).then((isAdded) => {
-            this.setState({
-                product: { name: '', price: 0.0, currency: 'USD' },
-                isLoading: false,
-                isAdded: isAdded,
-            });
+            setProduct({ name: '', price: 0.0, currency: 'USD' });
+            setIsLoading(false);
+            setIsAdded(isAdded);
         });
+    };
+    if (isLoading) {
+        return <LoadingBar />;
     }
-
-    render() {
-        if (this.state.isLoading) {
-            return <LoadingBar />;
-        }
-        let message;
-        if (this.state.isAdded) {
-            message = (
-                <Message
-                    messageText={'The product was added'}
-                    level={'success'}
-                />
-            );
-        }
-
-        if (this.state.isAdded === false) {
-            message = (
-                <Message
-                    messageText={'Failed to add the product'}
-                    level={'failed'}
-                />
-            );
-        }
-        return (
-            <div>
-                <h1>Add Product</h1>
-                {message}
-                <ProductFormComponent
-                    product={this.state.product}
-                    displaySubmitButton={true}
-                    handleSubmit={this.addProduct}
-                />
-            </div>
+    let message;
+    if (isAdded) {
+        message = (
+            <Message messageText={'The product was added'} level={'success'} />
         );
     }
-}
+
+    if (isAdded === false) {
+        message = (
+            <Message
+                messageText={'Failed to add the product'}
+                level={'failed'}
+            />
+        );
+    }
+    return (
+        <div>
+            <h1>Add Product</h1>
+            {message}
+            <ProductFormComponent
+                product={product}
+                displaySubmitButton={true}
+                handleSubmit={handleSubmit}
+            />
+        </div>
+    );
+};
 
 export default AddProduct;

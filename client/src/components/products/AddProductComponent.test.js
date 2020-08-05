@@ -4,16 +4,6 @@ import { shallow } from 'enzyme';
 import * as productsService from '../../services/productsService';
 
 describe('AddProduct', () => {
-    it('initializes the state correctly', () => {
-        const wrapper = shallow(<AddProduct />);
-
-        expect(wrapper.state()).toEqual({
-            product: { name: '', price: 0, currency: 'USD' },
-            isLoading: false,
-            isAdded: undefined,
-        });
-    });
-
     describe('WHEN #addProduct is invoked', () => {
         describe('WHEN the operation is successful', () => {
             it('calls addProduct and marks the add as successful', () => {
@@ -29,10 +19,12 @@ describe('AddProduct', () => {
                     currency: 'BGN',
                 };
                 const wrapper = shallow(<AddProduct />);
-                const instance = wrapper.instance();
 
-                instance.addProduct(newProduct);
-                expect(wrapper.state().isLoading).toEqual(true);
+                wrapper
+                    .find('ProductFormComponent')
+                    .props()
+                    .handleSubmit(newProduct);
+                expect(wrapper.find('LoadingBar').exists()).toEqual(true);
                 expect(productsService.addProduct).toHaveBeenCalledTimes(1);
                 expect(productsService.addProduct).toHaveBeenCalledWith(
                     newProduct
@@ -40,13 +32,19 @@ describe('AddProduct', () => {
 
                 return new Promise((resolve) => setImmediate(resolve)).then(
                     () => {
-                        expect(wrapper.state().isLoading).toEqual(false);
-                        expect(wrapper.state().product).toEqual({
+                        expect(wrapper.find('LoadingBar').exists()).toEqual(
+                            false
+                        );
+                        expect(
+                            wrapper.find('ProductFormComponent').props().product
+                        ).toEqual({
                             name: '',
                             price: 0,
                             currency: 'USD',
                         });
-                        expect(wrapper.state().isAdded).toEqual(true);
+                        expect(wrapper.find('Message').props().level).toEqual(
+                            'success'
+                        );
                     }
                 );
             });
@@ -66,10 +64,11 @@ describe('AddProduct', () => {
                     currency: 'BGN',
                 };
                 const wrapper = shallow(<AddProduct />);
-                const instance = wrapper.instance();
-
-                instance.addProduct(newProduct);
-                expect(wrapper.state().isLoading).toEqual(true);
+                wrapper
+                    .find('ProductFormComponent')
+                    .props()
+                    .handleSubmit(newProduct);
+                expect(wrapper.find('LoadingBar').exists()).toEqual(true);
                 expect(productsService.addProduct).toHaveBeenCalledTimes(1);
                 expect(productsService.addProduct).toHaveBeenCalledWith(
                     newProduct
@@ -77,13 +76,19 @@ describe('AddProduct', () => {
 
                 return new Promise((resolve) => setImmediate(resolve)).then(
                     () => {
-                        expect(wrapper.state().isLoading).toEqual(false);
-                        expect(wrapper.state().product).toEqual({
+                        expect(wrapper.find('LoadingBar').exists()).toEqual(
+                            false
+                        );
+                        expect(
+                            wrapper.find('ProductFormComponent').props().product
+                        ).toEqual({
                             name: '',
                             price: 0,
                             currency: 'USD',
                         });
-                        expect(wrapper.state().isAdded).toEqual(false);
+                        expect(wrapper.find('Message').props().level).toEqual(
+                            'failed'
+                        );
                     }
                 );
             });

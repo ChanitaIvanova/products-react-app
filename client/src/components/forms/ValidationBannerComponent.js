@@ -1,18 +1,12 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './ValidationBanner.scss';
 
-class ValidationBanner extends Component {
-    render() {
-        return (
-            <span
-                className={
-                    'error-message ' + (this.props.display ? '' : 'hidden')
-                }
-            >
-                {this.props.errorMessage}
-            </span>
-        );
-    }
-}
+const ValidationBanner = ({ display = false, errorMessage = '' }) => {
+    return (
+        <span className={'error-message ' + (display ? '' : 'hidden')}>
+            {errorMessage}
+        </span>
+    );
+};
 
 export default ValidationBanner;

@@ -195,20 +195,22 @@ describe('ProductFormComponent', () => {
                         const wrapper = shallow(
                             <ProductFormComponent
                                 product={{
-                                    name: 'name',
+                                    name: '',
                                     price: 0,
                                     currency: 'USD',
                                 }}
                                 onFormValidationChange={onFormValidationChange}
                             />
                         );
-
                         const nameInputElement = wrapper.find('#product-name');
-                        nameInputElement.simulate('change', {
-                            target: { name: 'name', value: '' },
+                        nameInputElement.props().onBlur();
+                        expect(
+                            wrapper.find('ValidationBanner').at(0).props()
+                        ).toEqual({
+                            display: true,
+                            errorMessage:
+                                'Please enter a name for the product!',
                         });
-                        nameInputElement.simulate('blur');
-                        expect(wrapper.state().isNameValid).toEqual(false);
                         expect(isValid).toEqual(false);
                     });
                 });
@@ -218,7 +220,7 @@ describe('ProductFormComponent', () => {
                         const wrapper = shallow(
                             <ProductFormComponent
                                 product={{
-                                    name: 'name',
+                                    name: '',
                                     price: 0,
                                     currency: 'USD',
                                 }}
@@ -226,11 +228,14 @@ describe('ProductFormComponent', () => {
                         );
 
                         const nameInputElement = wrapper.find('#product-name');
-                        nameInputElement.simulate('change', {
-                            target: { name: 'name', value: '' },
+                        nameInputElement.props().onBlur();
+                        expect(
+                            wrapper.find('ValidationBanner').at(0).props()
+                        ).toEqual({
+                            display: true,
+                            errorMessage:
+                                'Please enter a name for the product!',
                         });
-                        nameInputElement.simulate('blur');
-                        expect(wrapper.state().isNameValid).toEqual(false);
                     });
                 });
             });
@@ -245,20 +250,22 @@ describe('ProductFormComponent', () => {
                         const wrapper = shallow(
                             <ProductFormComponent
                                 product={{
-                                    name: '',
+                                    name: 'name',
                                     price: 0,
                                     currency: 'USD',
                                 }}
                                 onFormValidationChange={onFormValidationChange}
                             />
                         );
-
                         const nameInputElement = wrapper.find('#product-name');
-                        nameInputElement.simulate('change', {
-                            target: { name: 'name', value: 'name' },
+                        nameInputElement.props().onBlur();
+                        expect(
+                            wrapper.find('ValidationBanner').at(0).props()
+                        ).toEqual({
+                            display: false,
+                            errorMessage:
+                                'Please enter a name for the product!',
                         });
-                        nameInputElement.simulate('blur');
-                        expect(wrapper.state().isNameValid).toEqual(true);
                         expect(isValid).toEqual(true);
                     });
                 });
@@ -268,7 +275,7 @@ describe('ProductFormComponent', () => {
                         const wrapper = shallow(
                             <ProductFormComponent
                                 product={{
-                                    name: '',
+                                    name: 'name',
                                     price: 0,
                                     currency: 'USD',
                                 }}
@@ -276,11 +283,14 @@ describe('ProductFormComponent', () => {
                         );
 
                         const nameInputElement = wrapper.find('#product-name');
-                        nameInputElement.simulate('change', {
-                            target: { name: 'name', value: 'name' },
+                        nameInputElement.props().onBlur();
+                        expect(
+                            wrapper.find('ValidationBanner').at(0).props()
+                        ).toEqual({
+                            display: false,
+                            errorMessage:
+                                'Please enter a name for the product!',
                         });
-                        nameInputElement.simulate('blur');
-                        expect(wrapper.state().isNameValid).toEqual(true);
                     });
                 });
             });
@@ -300,7 +310,7 @@ describe('ProductFormComponent', () => {
                             <ProductFormComponent
                                 product={{
                                     name: '',
-                                    price: 25,
+                                    price: 0,
                                     currency: 'USD',
                                 }}
                                 onFormValidationChange={onFormValidationChange}
@@ -310,11 +320,13 @@ describe('ProductFormComponent', () => {
                         const priceInputElement = wrapper.find(
                             '#product-price'
                         );
-                        priceInputElement.simulate('change', {
-                            target: { name: 'price', value: 0 },
+                        priceInputElement.props().onBlur();
+                        expect(
+                            wrapper.find('ValidationBanner').at(1).props()
+                        ).toEqual({
+                            display: true,
+                            errorMessage: 'The price should be larger than 0!',
                         });
-                        priceInputElement.simulate('blur');
-                        expect(wrapper.state().isPriceValid).toEqual(false);
                         expect(isValid).toEqual(false);
                     });
                 });
@@ -325,7 +337,7 @@ describe('ProductFormComponent', () => {
                             <ProductFormComponent
                                 product={{
                                     name: '',
-                                    price: 25,
+                                    price: 0,
                                     currency: 'USD',
                                 }}
                             />
@@ -334,11 +346,13 @@ describe('ProductFormComponent', () => {
                         const priceInputElement = wrapper.find(
                             '#product-price'
                         );
-                        priceInputElement.simulate('change', {
-                            target: { name: 'price', value: 0 },
+                        priceInputElement.props().onBlur();
+                        expect(
+                            wrapper.find('ValidationBanner').at(1).props()
+                        ).toEqual({
+                            display: true,
+                            errorMessage: 'The price should be larger than 0!',
                         });
-                        priceInputElement.simulate('blur');
-                        expect(wrapper.state().isPriceValid).toEqual(false);
                     });
                 });
             });
@@ -354,7 +368,7 @@ describe('ProductFormComponent', () => {
                             <ProductFormComponent
                                 product={{
                                     name: '',
-                                    price: 0,
+                                    price: 25,
                                     currency: 'USD',
                                 }}
                                 onFormValidationChange={onFormValidationChange}
@@ -364,11 +378,13 @@ describe('ProductFormComponent', () => {
                         const priceInputElement = wrapper.find(
                             '#product-price'
                         );
-                        priceInputElement.simulate('change', {
-                            target: { name: 'price', value: 25 },
+                        priceInputElement.props().onBlur();
+                        expect(
+                            wrapper.find('ValidationBanner').at(1).props()
+                        ).toEqual({
+                            display: false,
+                            errorMessage: 'The price should be larger than 0!',
                         });
-                        priceInputElement.simulate('blur');
-                        expect(wrapper.state().isPriceValid).toEqual(true);
                         expect(isValid).toEqual(true);
                     });
                 });
@@ -379,7 +395,7 @@ describe('ProductFormComponent', () => {
                             <ProductFormComponent
                                 product={{
                                     name: '',
-                                    price: 0,
+                                    price: 25,
                                     currency: 'USD',
                                 }}
                             />
@@ -388,11 +404,13 @@ describe('ProductFormComponent', () => {
                         const priceInputElement = wrapper.find(
                             '#product-price'
                         );
-                        priceInputElement.simulate('change', {
-                            target: { name: 'napriceme', value: 25 },
+                        priceInputElement.props().onBlur();
+                        expect(
+                            wrapper.find('ValidationBanner').at(1).props()
+                        ).toEqual({
+                            display: false,
+                            errorMessage: 'The price should be larger than 0!',
                         });
-                        priceInputElement.simulate('blur');
-                        expect(wrapper.state().isNameValid).toEqual(true);
                     });
                 });
             });

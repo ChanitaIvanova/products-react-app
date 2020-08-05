@@ -1,65 +1,50 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import './Modal.scss';
 
-class ModalComponent extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            submitButton: this.props.submitButton || 'Submit',
-            cancelButton: this.props.cancelButton || 'Cancel',
-            modalTitle: this.props.modalTitle || '',
-            submitBtnClass: this.props.submitBtnClass || 'default-btn',
-        };
-        this.handleClose = this.handleClose.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    handleClose() {
-        this.props.onClose();
-    }
-
-    handleSubmit() {
-        this.props.onSubmit();
-    }
-
-    componentDidMount() {
-        this.modal = document.createElement('DIV');
+const ModalComponent = ({
+    submitButton = 'Submit',
+    cancelButton = 'Cancel',
+    modalTitle = '',
+    submitBtnClass = 'default-btn',
+    children,
+    onClose,
+    onSubmit,
+}) => {
+    let modal;
+    const mountDialog = () => {
+        modal = document.createElement('DIV');
         ReactDOM.render(
             <div>
                 <div className='modal' tabIndex='-1' role='dialog'>
                     <div className='modal-dialog'>
                         <div className='modal-content'>
                             <div className='modal-header'>
-                                <h5 className='modal-title'>
-                                    {this.state.modalTitle}
-                                </h5>
+                                <h5 className='modal-title'>{modalTitle}</h5>
                                 <button
                                     type='button'
                                     className='close'
                                     aria-label='Close'
-                                    onClick={this.handleClose}
+                                    onClick={onClose}
                                 >
                                     <span aria-hidden='true'>&times;</span>
                                 </button>
                             </div>
-                            <div className='modal-body'>
-                                {this.props.children}
-                            </div>
+                            <div className='modal-body'>{children}</div>
                             <div className='modal-footer'>
                                 <button
                                     className='default-btn'
                                     type='button'
-                                    onClick={this.handleClose}
+                                    onClick={onClose}
                                 >
-                                    {this.state.cancelButton}
+                                    {cancelButton}
                                 </button>
                                 <button
-                                    className={this.state.submitBtnClass}
+                                    className={submitBtnClass}
                                     type='button'
-                                    onClick={this.handleSubmit}
+                                    onClick={onSubmit}
                                 >
-                                    {this.state.submitButton}
+                                    {submitButton}
                                 </button>
                             </div>
                         </div>
@@ -68,18 +53,19 @@ class ModalComponent extends Component {
 
                 <div className='modal-backdrop'></div>
             </div>,
-            document.body.appendChild(this.modal)
+            document.body.appendChild(modal)
         );
-    }
+    };
 
-    componentWillUnmount() {
-        ReactDOM.unmountComponentAtNode(this.modal);
-        document.body.removeChild(this.modal);
-    }
-
-    render() {
-        return null;
-    }
-}
+    const unmountDialog = () => {
+        ReactDOM.unmountComponentAtNode(modal);
+        document.body.removeChild(modal);
+    };
+    useEffect(mountDialog, []);
+    useEffect(() => {
+        return unmountDialog;
+    }, []);
+    return null;
+};
 
 export default ModalComponent;
