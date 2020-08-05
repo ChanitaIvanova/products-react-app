@@ -1,22 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { NavLink, Switch, Route } from 'react-router-dom';
 import Home from '../home/HomeComponent';
 import AddProduct from '../products/AddProductComponent';
-import { fetchPermissions } from '../../services/permissionsService';
 import { addProperty } from '../../services/permissions.constants';
+import { useSelector } from 'react-redux';
 import './Nav.scss';
 
 const NavComponent = () => {
-    const [canAddProduct, setCanAddProduct] = useState(false);
-    const checkPermissions = () => {
-        fetchPermissions().then((permissions) => {
-            if (permissions.indexOf(addProperty) !== -1) {
-                setCanAddProduct(true);
-            }
-        });
-    };
+    const permissions = useSelector((state) => state.permissions.permissions);
 
-    useEffect(checkPermissions, []);
+    const canAdd = () => {
+        return permissions.indexOf(addProperty) !== -1;
+    };
 
     return (
         <div>
@@ -26,7 +21,7 @@ const NavComponent = () => {
                         Home
                     </NavLink>
                 </li>
-                {canAddProduct && (
+                {canAdd() && (
                     <li>
                         <NavLink activeClassName='active' to='/add'>
                             Add Product

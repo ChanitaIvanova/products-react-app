@@ -9,6 +9,12 @@ import { BrowserRouter } from 'react-router-dom';
 import NavComponent from './components/navigation/NavComponent';
 import { Provider } from 'react-redux';
 import store from './state/store';
+import { fetchPermissions } from './services/permissionsService';
+import { receivePermissions } from './state/permissions/permissionsActions';
+
+fetchPermissions().then((permissions) => {
+    store.dispatch(receivePermissions(permissions));
+});
 
 ReactDOM.render(
     <React.StrictMode>

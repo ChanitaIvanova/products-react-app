@@ -1,20 +1,29 @@
 import React from 'react';
 import NavComponent from './NavComponent';
-import { shallow, mount } from 'enzyme';
-import * as permissionsService from '../../services/permissionsService';
-import { act } from 'react-dom/test-utils';
+import { mount } from 'enzyme';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
+
+const middlewares = [thunk];
+const mockStore = configureMockStore(middlewares);
 
 describe('NavComponent', () => {
     describe('WHEN the user does not have create privilege', () => {
         it('does not display the Add Product link', () => {
-            permissionsService.fetchPermissions = jest.fn();
-            permissionsService.fetchPermissions.mockReturnValueOnce(
-                new Promise((resolve) => {
-                    resolve([]);
-                })
+            const store = mockStore({
+                permissions: { permissions: [] },
+                products: {},
+            });
+
+            const wrapper = mount(
+                <Provider store={store}>
+                    <BrowserRouter>
+                        <NavComponent />
+                    </BrowserRouter>
+                </Provider>
             );
-            const wrapper = shallow(<NavComponent />);
 
             return new Promise((resolve) => setImmediate(resolve)).then(() => {
                 const listItems = wrapper.find('ul li');
@@ -25,18 +34,19 @@ describe('NavComponent', () => {
     });
 
     describe('WHEN the user has create privilege', () => {
-        xit('displays Home and Add Product links', () => {
-            permissionsService.fetchPermissions = jest.fn();
-            permissionsService.fetchPermissions.mockReturnValueOnce(
-                new Promise((resolve) => {
-                    resolve(['CREATE']);
-                })
-            );
-            let wrapper;
-            act(() => {
-                wrapper = mount(<NavComponent />);
+        it('displays Home and Add Product links', () => {
+            const store = mockStore({
+                permissions: { permissions: ['CREATE'] },
+                products: {},
             });
 
+            const wrapper = mount(
+                <Provider store={store}>
+                    <BrowserRouter>
+                        <NavComponent />
+                    </BrowserRouter>
+                </Provider>
+            );
             return new Promise((resolve) => setImmediate(resolve)).then(() => {
                 const listItems = wrapper.find('ul li');
                 expect(listItems.length).toEqual(2);
