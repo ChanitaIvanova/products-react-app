@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { fetchPermissions } from '../../services/permissionsService';
 import {
     fetchProducts,
     editProduct,
@@ -15,13 +14,15 @@ import ModalComponent from '../modal/ModalComponent';
 import ProductFormComponent from '../products/ProductFormComponent';
 import LoadingBar from '../common/LoadingBarComponent';
 import Message from '../common/MessageComponent';
+import { useSelector, useDispatch } from 'react-redux';
 
-export const HomeComponent = ({
-    fetchProducts,
-    areLoading,
-    products,
-    permissions,
-}) => {
+const Home = () => {
+    const permissions = useSelector((state) => state.permissions.permissions);
+    const products = useSelector((state) => state.products.products);
+    const areLoading = useSelector((state) => state.products.areLoading);
+
+    const dispatch = useDispatch();
+
     const [isLoading, setIsLoading] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
@@ -71,7 +72,7 @@ export const HomeComponent = ({
             if (!isUpdated) {
                 return;
             }
-            fetchProducts();
+            dispatch(fetchProducts());
         });
     }, [isUpdateFormValidRef, updatedProductRef]);
 
@@ -105,7 +106,7 @@ export const HomeComponent = ({
             if (!faledToDelete) {
                 return;
             }
-            fetchProducts();
+            dispatch(fetchProducts());
         });
     };
 
@@ -118,7 +119,7 @@ export const HomeComponent = ({
     };
 
     const getProducts = () => {
-        fetchProducts();
+        dispatch(fetchProducts());
     };
 
     const canRead = () => {
@@ -223,21 +224,5 @@ export const HomeComponent = ({
         </div>
     );
 };
-
-const mapStateToProps = (state) => {
-    return {
-        products: state.products.products,
-        areLoading: state.products.areLoading,
-        permissions: state.permissions.permissions,
-    };
-};
-
-const mapDispatchToProps = (dispatch) => ({
-    fetchProducts: () => {
-        dispatch(fetchProducts());
-    },
-});
-
-const Home = connect(mapStateToProps, mapDispatchToProps)(HomeComponent);
 
 export default Home;
