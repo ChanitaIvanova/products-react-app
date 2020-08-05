@@ -4,7 +4,6 @@ import {
     editProduct,
     deleteProduct,
 } from '../../services/productsService';
-import { connect } from 'react-redux';
 import {
     readProperty,
     editProperty,
@@ -91,7 +90,6 @@ const Home = () => {
      */
     const closeDeleteModal = () => {
         setOpenDelete(false);
-        this.setState({ openDelete: false });
     };
 
     /**

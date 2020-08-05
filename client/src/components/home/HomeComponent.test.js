@@ -1,12 +1,14 @@
 import React from 'react';
-import { HomeComponent } from './HomeComponent';
+import Home from './HomeComponent';
 import { mount } from 'enzyme';
-import { act } from 'react-dom/test-utils';
-import { render } from '@testing-library/react';
 import * as productsService from '../../services/productsService';
-import * as permissionsService from '../../services/permissionsService';
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
+const middlewares = [thunk];
+const mockStore = configureMockStore(middlewares);
 
-xdescribe('HomeComponent', () => {
+describe('HomeComponent', () => {
     let products;
     beforeEach(() => {
         products = [
@@ -26,403 +28,202 @@ xdescribe('HomeComponent', () => {
     });
 
     describe('WHEN the user does not have read permissions', () => {
-        it('does not request the products', () => {
-            permissionsService.fetchPermissions = jest.fn();
-            permissionsService.fetchPermissions.mockReturnValueOnce(
-                new Promise((resolve) => {
-                    resolve([]);
-                })
-            );
-            const mockProps = {
-                fetchProducts: jest.fn(),
-                products: { areLoading: true },
-            };
-            let wrapper;
-            act(() => {
-                wrapper = render(
-                    <HomeComponent
-                        fetchProducts={mockProps.fetchProducts}
-                        products={{ areLoading: true }}
-                    />
-                );
-                const loadingElement = wrapper.baseElement.querySelector(
-                    'LoadingBar'
-                );
-                //wrapper = mount(<HomeComponent {...mockProps} />);
-                expect(loadingElement).toBeNull();
+        it('displays correct message', () => {
+            const store = mockStore({
+                permissions: { permissions: [] },
+                products: { products: [], areLoading: false },
             });
 
-            return new Promise((resolve) => setImmediate(resolve)).then(() => {
-                const loadingElement = wrapper.baseElement.querySelector(
-                    'LoadingBar'
-                );
-                //wrapper = mount(<HomeComponent {...mockProps} />);
-                expect(loadingElement).not.toBeNull();
-                //expect(wrapper.find('LoadingBar').exists()).toEqual(false);
-                expect(mockProps.fetchProducts).not.toHaveBeenCalled();
-            });
-        });
-
-        it('sets hasReadPermissions to false', () => {
-            permissionsService.fetchPermissions = jest.fn();
-            permissionsService.fetchPermissions.mockReturnValueOnce(
-                new Promise((resolve) => {
-                    resolve([]);
-                })
+            const wrapper = mount(
+                <Provider store={store}>
+                    <Home />
+                </Provider>
             );
-            const mockProps = {
-                fetchProducts: jest.fn(),
-                products: { areLoading: true },
-            };
-            const wrapper = shallow(<HomeComponent {...mockProps} />);
-
-            return new Promise((resolve) => setImmediate(resolve)).then(() => {
-                expect(wrapper.state().isLoading).toEqual(false);
-                expect(wrapper.state().hasReadPermissions).toEqual(false);
+            expect(wrapper.find('Message').props()).toEqual({
+                messageText:
+                    'You do not have permissions to view the list of products!',
+                level: 'failed',
             });
         });
     });
 
     describe('WHEN the user has read permissions', () => {
         describe('WHEN the user has only READ privileges', () => {
-            beforeEach(() => {
-                permissionsService.fetchPermissions = jest.fn();
-                permissionsService.fetchPermissions.mockReturnValueOnce(
-                    new Promise((resolve) => {
-                        resolve(['READ']);
-                    })
-                );
-            });
-            it('requests the products and sets hasReadPermissions to true', () => {
-                const mockProps = {
-                    fetchProducts: jest.fn(),
-                    areLoading: true,
-                };
-                const wrapper = shallow(<HomeComponent {...mockProps} />);
-                expect(wrapper.state().isLoading).toEqual(true);
-                return new Promise((resolve) => setImmediate(resolve)).then(
-                    () => {
-                        expect(wrapper.state().isLoading).toEqual(false);
-                        expect(wrapper.state().hasReadPermissions).toEqual(
-                            true
-                        );
-                        expect(mockProps.fetchProducts).toHaveBeenCalled();
-                    }
-                );
-            });
-
             it('lists the products with no actions', () => {
-                const mockProps = {
-                    fetchProducts: jest.fn(),
-                    areLoading: false,
-                    products: products,
-                };
-                const wrapper = shallow(<HomeComponent {...mockProps} />);
+                const store = mockStore({
+                    permissions: { permissions: ['READ'] },
+                    products: { products: products, areLoading: false },
+                });
 
-                return new Promise((resolve) => setImmediate(resolve)).then(
-                    () => {
-                        expect(wrapper.state().isLoading).toEqual(false);
-                        expect(wrapper.state().hasReadPermissions).toEqual(
-                            true
-                        );
-                        const headerColumns = wrapper.find(
-                            'table > thead > tr > th'
-                        );
-                        expect(headerColumns.length).toEqual(3);
-                        expect(headerColumns.at(0).text().trim()).toEqual(
-                            'Product Name'
-                        );
-                        expect(headerColumns.at(1).text().trim()).toEqual(
-                            'Price'
-                        );
-                        expect(headerColumns.at(2).text().trim()).toEqual(
-                            'Currency'
-                        );
-
-                        const contentRows = wrapper.find('table > tbody > tr');
-                        expect(contentRows.length).toEqual(2);
-
-                        const firstRowColumns = contentRows.at(0).find('td');
-                        expect(firstRowColumns.at(0).text().trim()).toEqual(
-                            'TV'
-                        );
-                        expect(firstRowColumns.at(1).text().trim()).toEqual(
-                            '1000'
-                        );
-                        expect(firstRowColumns.at(2).text().trim()).toEqual(
-                            'USD'
-                        );
-
-                        const secondRowColumns = contentRows.at(1).find('td');
-                        expect(secondRowColumns.at(0).text().trim()).toEqual(
-                            'SSD'
-                        );
-                        expect(secondRowColumns.at(1).text().trim()).toEqual(
-                            '100'
-                        );
-                        expect(secondRowColumns.at(2).text().trim()).toEqual(
-                            'USD'
-                        );
-                    }
+                const wrapper = mount(
+                    <Provider store={store}>
+                        <Home />
+                    </Provider>
                 );
+
+                const headerColumns = wrapper.find('table > thead > tr > th');
+                expect(headerColumns.length).toEqual(3);
+                expect(headerColumns.at(0).text().trim()).toEqual(
+                    'Product Name'
+                );
+                expect(headerColumns.at(1).text().trim()).toEqual('Price');
+                expect(headerColumns.at(2).text().trim()).toEqual('Currency');
+
+                const contentRows = wrapper.find('table > tbody > tr');
+                expect(contentRows.length).toEqual(2);
+
+                const firstRowColumns = contentRows.at(0).find('td');
+                expect(firstRowColumns.at(0).text().trim()).toEqual('TV');
+                expect(firstRowColumns.at(1).text().trim()).toEqual('1000');
+                expect(firstRowColumns.at(2).text().trim()).toEqual('USD');
+
+                const secondRowColumns = contentRows.at(1).find('td');
+                expect(secondRowColumns.at(0).text().trim()).toEqual('SSD');
+                expect(secondRowColumns.at(1).text().trim()).toEqual('100');
+                expect(secondRowColumns.at(2).text().trim()).toEqual('USD');
             });
         });
 
         describe('WHEN the user has READ and UPDATE privileges', () => {
+            let wrapper;
             beforeEach(() => {
-                permissionsService.fetchPermissions = jest.fn();
-                permissionsService.fetchPermissions.mockReturnValueOnce(
-                    new Promise((resolve) => {
-                        resolve(['READ', 'UPDATE']);
-                    })
-                );
-            });
-            it('requests the products and sets hasReadPermissions and hasEditPermissions to true', () => {
-                const mockProps = {
-                    fetchProducts: jest.fn(),
-                    areLoading: true,
-                };
-                const wrapper = shallow(<HomeComponent {...mockProps} />);
-                expect(wrapper.state().isLoading).toEqual(true);
-                return new Promise((resolve) => setImmediate(resolve)).then(
-                    () => {
-                        expect(wrapper.state().isLoading).toEqual(false);
-                        expect(wrapper.state().hasReadPermissions).toEqual(
-                            true
-                        );
-                        expect(wrapper.state().hasEditPermissions).toEqual(
-                            true
-                        );
-                        expect(mockProps.fetchProducts).toHaveBeenCalled();
-                    }
-                );
-            });
+                const store = mockStore({
+                    permissions: { permissions: ['READ', 'UPDATE'] },
+                    products: { products: products, areLoading: false },
+                });
 
+                wrapper = mount(
+                    <Provider store={store}>
+                        <Home />
+                    </Provider>
+                );
+            });
             it('lists the products with only edit action', () => {
-                const mockProps = {
-                    fetchProducts: jest.fn(),
-                    areLoading: false,
-                    products: products,
-                };
-                const wrapper = shallow(<HomeComponent {...mockProps} />);
-
-                return new Promise((resolve) => setImmediate(resolve)).then(
-                    () => {
-                        expect(wrapper.state().isLoading).toEqual(false);
-                        expect(wrapper.state().hasReadPermissions).toEqual(
-                            true
-                        );
-                        expect(wrapper.state().hasEditPermissions).toEqual(
-                            true
-                        );
-                        const headerColumns = wrapper.find(
-                            'table > thead > tr > th'
-                        );
-                        expect(headerColumns.length).toEqual(4);
-                        expect(headerColumns.at(0).text().trim()).toEqual(
-                            'Product Name'
-                        );
-                        expect(headerColumns.at(1).text().trim()).toEqual(
-                            'Price'
-                        );
-                        expect(headerColumns.at(2).text().trim()).toEqual(
-                            'Currency'
-                        );
-                        expect(headerColumns.at(3).text().trim()).toEqual(
-                            'Actions'
-                        );
-
-                        const contentRows = wrapper.find('table > tbody > tr');
-                        expect(contentRows.length).toEqual(2);
-
-                        const firstRowColumns = contentRows.at(0).find('td');
-                        expect(firstRowColumns.at(0).text().trim()).toEqual(
-                            'TV'
-                        );
-                        expect(firstRowColumns.at(1).text().trim()).toEqual(
-                            '1000'
-                        );
-                        expect(firstRowColumns.at(2).text().trim()).toEqual(
-                            'USD'
-                        );
-                        let editButton = firstRowColumns.at(3).find('button');
-                        expect(editButton.length).toEqual(1);
-                        expect(editButton.text().trim()).toEqual('Edit');
-
-                        const secondRowColumns = contentRows.at(1).find('td');
-                        expect(secondRowColumns.at(0).text().trim()).toEqual(
-                            'SSD'
-                        );
-                        expect(secondRowColumns.at(1).text().trim()).toEqual(
-                            '100'
-                        );
-                        expect(secondRowColumns.at(2).text().trim()).toEqual(
-                            'USD'
-                        );
-
-                        editButton = secondRowColumns.at(3).find('button');
-                        expect(editButton.length).toEqual(1);
-                        expect(editButton.text().trim()).toEqual('Edit');
-                    }
+                const headerColumns = wrapper.find('table > thead > tr > th');
+                expect(headerColumns.length).toEqual(4);
+                expect(headerColumns.at(0).text().trim()).toEqual(
+                    'Product Name'
                 );
+                expect(headerColumns.at(1).text().trim()).toEqual('Price');
+                expect(headerColumns.at(2).text().trim()).toEqual('Currency');
+                expect(headerColumns.at(3).text().trim()).toEqual('Actions');
+
+                const contentRows = wrapper.find('table > tbody > tr');
+                expect(contentRows.length).toEqual(2);
+
+                const firstRowColumns = contentRows.at(0).find('td');
+                expect(firstRowColumns.at(0).text().trim()).toEqual('TV');
+                expect(firstRowColumns.at(1).text().trim()).toEqual('1000');
+                expect(firstRowColumns.at(2).text().trim()).toEqual('USD');
+                let editButton = firstRowColumns.at(3).find('button');
+                expect(editButton.length).toEqual(1);
+                expect(editButton.text().trim()).toEqual('Edit');
+
+                const secondRowColumns = contentRows.at(1).find('td');
+                expect(secondRowColumns.at(0).text().trim()).toEqual('SSD');
+                expect(secondRowColumns.at(1).text().trim()).toEqual('100');
+                expect(secondRowColumns.at(2).text().trim()).toEqual('USD');
+
+                editButton = secondRowColumns.at(3).find('button');
+                expect(editButton.length).toEqual(1);
+                expect(editButton.text().trim()).toEqual('Edit');
             });
 
             describe('WHEN edit is invoked', () => {
                 it('opens the dialog and initializes selectedProduct and updatedProduct', () => {
-                    const mockProps = {
-                        fetchProducts: jest.fn(),
-                        areLoading: false,
-                        products: products,
-                    };
-                    const wrapper = shallow(<HomeComponent {...mockProps} />);
-
-                    return new Promise((resolve) => setImmediate(resolve)).then(
-                        () => {
-                            expect(wrapper.state().isLoading).toEqual(false);
-                            expect(wrapper.state().hasReadPermissions).toEqual(
-                                true
-                            );
-                            const contentRows = wrapper.find(
-                                'table > tbody > tr'
-                            );
-                            const firstRowColumns = contentRows
-                                .at(0)
-                                .find('td');
-                            let editButton = firstRowColumns
-                                .at(3)
-                                .find('button');
-                            editButton.simulate('click');
-                            expect(wrapper.state().openEdit).toEqual(true);
-                            expect(wrapper.state().selectedProduct).toEqual(
-                                products[0]
-                            );
-                            expect(wrapper.state().updatedProduct).toEqual(
-                                products[0]
-                            );
-                        }
-                    );
+                    const contentRows = wrapper.find('table > tbody > tr');
+                    const firstRowColumns = contentRows.at(0).find('td');
+                    let editButton = firstRowColumns.at(3).find('button');
+                    editButton.simulate('click');
+                    expect(
+                        wrapper.find('ModalComponent').props().modalTitle
+                    ).toEqual('Edit product');
+                    expect(
+                        wrapper.find('ModalComponent').props().submitBtnClass
+                    ).toEqual('primary-btn');
                 });
 
                 describe('WHEN the Edit dialog is opened', () => {
-                    let wrapper;
-                    let mockProps;
                     beforeEach(() => {
-                        mockProps = {
-                            fetchProducts: jest.fn(),
-                            areLoading: false,
-                            products: products,
-                        };
-                        wrapper = shallow(<HomeComponent {...mockProps} />);
-
-                        wrapper.setState({ openEdit: true });
+                        const contentRows = wrapper.find('table > tbody > tr');
+                        const firstRowColumns = contentRows.at(0).find('td');
+                        let editButton = firstRowColumns.at(3).find('button');
+                        editButton.simulate('click');
                     });
                     describe('WHEN closeEditModal is called', () => {
                         it('closes the modal', () => {
-                            const instance = wrapper.instance();
-                            instance.closeEditModal();
-                            expect(wrapper.state().openEdit).toEqual(false);
+                            wrapper.find('ModalComponent').props().onClose();
+                            wrapper.update();
+                            expect(
+                                wrapper.find('ModalComponent').exists()
+                            ).toEqual(false);
                         });
                     });
 
                     describe('WHEN submitEditModal is called', () => {
-                        describe('WHEN the form is not valid', () => {
-                            it('does not call the editProduct', () => {
-                                productsService.editProduct = jest.fn();
-                                wrapper.setState({ isUpdateFormValid: false });
-                                const instance = wrapper.instance();
-                                instance.submitEditModal();
-                                expect(
-                                    productsService.editProduct
-                                ).not.toHaveBeenCalled();
-                            });
-                        });
-
                         describe('WHEN the form is valid', () => {
-                            let updatedProduct;
-                            beforeEach(() => {
-                                updatedProduct = [
-                                    {
-                                        id: 1,
-                                        name: 'TV TV',
-                                        price: 1050,
-                                        currency: 'USD',
-                                    },
-                                ];
-                                productsService.editProduct = jest.fn();
-                            });
-
                             describe('WHEN the product was not updated', () => {
                                 it('called editProduct but not fecthProducts', () => {
+                                    productsService.editProduct = jest.fn();
                                     productsService.editProduct.mockReturnValueOnce(
                                         new Promise((resolve) => {
                                             resolve(false);
                                         })
                                     );
-                                    wrapper.setState({
-                                        isUpdateFormValid: true,
-                                    });
-                                    wrapper.setState({
-                                        updatedProduct: updatedProduct,
-                                    });
-                                    const instance = wrapper.instance();
-                                    mockProps.fetchProducts.mockClear();
-                                    instance.submitEditModal();
-                                    expect(wrapper.state().openEdit).toEqual(
-                                        false
-                                    );
-                                    expect(wrapper.state().isLoading).toEqual(
-                                        true
-                                    );
+                                    wrapper
+                                        .find('ModalComponent')
+                                        .props()
+                                        .onSubmit();
+                                    wrapper.update();
+                                    expect(
+                                        wrapper.find('ModalComponent').exists()
+                                    ).toEqual(false);
+                                    expect(
+                                        wrapper.find('LoadingBar').exists()
+                                    ).toEqual(true);
                                     expect(
                                         productsService.editProduct
-                                    ).toHaveBeenCalledWith(updatedProduct);
+                                    ).toHaveBeenCalledWith(products[0]);
                                     return new Promise((resolve) =>
                                         setImmediate(resolve)
                                     ).then(() => {
+                                        wrapper.update();
                                         expect(
-                                            wrapper.state().isLoading
+                                            wrapper.find('LoadingBar').exists()
                                         ).toEqual(false);
-                                        expect(
-                                            mockProps.fetchProducts
-                                        ).not.toHaveBeenCalled();
                                     });
                                 });
                             });
 
                             describe('WHEN the product was updated', () => {
-                                it('called editProduct and fecthProducts', () => {
+                                it('called editProduct', () => {
+                                    productsService.editProduct = jest.fn();
                                     productsService.editProduct.mockReturnValueOnce(
                                         new Promise((resolve) => {
                                             resolve(true);
                                         })
                                     );
-                                    wrapper.setState({
-                                        isUpdateFormValid: true,
-                                    });
-                                    wrapper.setState({
-                                        updatedProduct: updatedProduct,
-                                    });
-                                    const instance = wrapper.instance();
-                                    mockProps.fetchProducts.mockClear();
-                                    instance.submitEditModal();
-                                    expect(wrapper.state().openEdit).toEqual(
-                                        false
-                                    );
-                                    expect(wrapper.state().isLoading).toEqual(
-                                        true
-                                    );
+                                    wrapper
+                                        .find('ModalComponent')
+                                        .props()
+                                        .onSubmit();
+                                    wrapper.update();
+                                    expect(
+                                        wrapper.find('ModalComponent').exists()
+                                    ).toEqual(false);
+                                    expect(
+                                        wrapper.find('LoadingBar').exists()
+                                    ).toEqual(true);
                                     expect(
                                         productsService.editProduct
-                                    ).toHaveBeenCalledWith(updatedProduct);
+                                    ).toHaveBeenCalledWith(products[0]);
                                     return new Promise((resolve) =>
                                         setImmediate(resolve)
                                     ).then(() => {
+                                        wrapper.update();
                                         expect(
-                                            wrapper.state().isLoading
+                                            wrapper.find('LoadingBar').exists()
                                         ).toEqual(false);
-                                        expect(
-                                            mockProps.fetchProducts
-                                        ).toHaveBeenCalled();
                                     });
                                 });
                             });
@@ -433,155 +234,81 @@ xdescribe('HomeComponent', () => {
         });
 
         describe('WHEN the user has READ and DELETE privileges', () => {
+            let wrapper;
             beforeEach(() => {
-                permissionsService.fetchPermissions = jest.fn();
-                permissionsService.fetchPermissions.mockReturnValueOnce(
-                    new Promise((resolve) => {
-                        resolve(['READ', 'DELETE']);
-                    })
-                );
-            });
-            it('requests the products and sets hasReadPermissions and hasDeletePermissions to true', () => {
-                const mockProps = {
-                    fetchProducts: jest.fn(),
-                    areLoading: true,
-                };
-                const wrapper = shallow(<HomeComponent {...mockProps} />);
-                expect(wrapper.state().isLoading).toEqual(true);
-                return new Promise((resolve) => setImmediate(resolve)).then(
-                    () => {
-                        expect(wrapper.state().isLoading).toEqual(false);
-                        expect(wrapper.state().hasReadPermissions).toEqual(
-                            true
-                        );
-                        expect(wrapper.state().hasDeletePermissions).toEqual(
-                            true
-                        );
-                        expect(mockProps.fetchProducts).toHaveBeenCalled();
-                    }
-                );
-            });
+                const store = mockStore({
+                    permissions: { permissions: ['READ', 'DELETE'] },
+                    products: { products: products, areLoading: false },
+                });
 
+                wrapper = mount(
+                    <Provider store={store}>
+                        <Home />
+                    </Provider>
+                );
+            });
             it('lists the products with only delete action', () => {
-                const mockProps = {
-                    fetchProducts: jest.fn(),
-                    areLoading: false,
-                    products: products,
-                };
-                const wrapper = shallow(<HomeComponent {...mockProps} />);
-
-                return new Promise((resolve) => setImmediate(resolve)).then(
-                    () => {
-                        expect(wrapper.state().isLoading).toEqual(false);
-                        expect(wrapper.state().hasReadPermissions).toEqual(
-                            true
-                        );
-                        expect(wrapper.state().hasDeletePermissions).toEqual(
-                            true
-                        );
-                        const headerColumns = wrapper.find(
-                            'table > thead > tr > th'
-                        );
-                        expect(headerColumns.length).toEqual(4);
-                        expect(headerColumns.at(0).text().trim()).toEqual(
-                            'Product Name'
-                        );
-                        expect(headerColumns.at(1).text().trim()).toEqual(
-                            'Price'
-                        );
-                        expect(headerColumns.at(2).text().trim()).toEqual(
-                            'Currency'
-                        );
-                        expect(headerColumns.at(3).text().trim()).toEqual(
-                            'Actions'
-                        );
-
-                        const contentRows = wrapper.find('table > tbody > tr');
-                        expect(contentRows.length).toEqual(2);
-
-                        const firstRowColumns = contentRows.at(0).find('td');
-                        expect(firstRowColumns.at(0).text().trim()).toEqual(
-                            'TV'
-                        );
-                        expect(firstRowColumns.at(1).text().trim()).toEqual(
-                            '1000'
-                        );
-                        expect(firstRowColumns.at(2).text().trim()).toEqual(
-                            'USD'
-                        );
-                        let editButton = firstRowColumns.at(3).find('button');
-                        expect(editButton.length).toEqual(1);
-                        expect(editButton.text().trim()).toEqual('Delete');
-
-                        const secondRowColumns = contentRows.at(1).find('td');
-                        expect(secondRowColumns.at(0).text().trim()).toEqual(
-                            'SSD'
-                        );
-                        expect(secondRowColumns.at(1).text().trim()).toEqual(
-                            '100'
-                        );
-                        expect(secondRowColumns.at(2).text().trim()).toEqual(
-                            'USD'
-                        );
-
-                        editButton = secondRowColumns.at(3).find('button');
-                        expect(editButton.length).toEqual(1);
-                        expect(editButton.text().trim()).toEqual('Delete');
-                    }
+                const headerColumns = wrapper.find('table > thead > tr > th');
+                expect(headerColumns.length).toEqual(4);
+                expect(headerColumns.at(0).text().trim()).toEqual(
+                    'Product Name'
                 );
+                expect(headerColumns.at(1).text().trim()).toEqual('Price');
+                expect(headerColumns.at(2).text().trim()).toEqual('Currency');
+                expect(headerColumns.at(3).text().trim()).toEqual('Actions');
+
+                const contentRows = wrapper.find('table > tbody > tr');
+                expect(contentRows.length).toEqual(2);
+
+                const firstRowColumns = contentRows.at(0).find('td');
+                expect(firstRowColumns.at(0).text().trim()).toEqual('TV');
+                expect(firstRowColumns.at(1).text().trim()).toEqual('1000');
+                expect(firstRowColumns.at(2).text().trim()).toEqual('USD');
+                let editButton = firstRowColumns.at(3).find('button');
+                expect(editButton.length).toEqual(1);
+                expect(editButton.text().trim()).toEqual('Delete');
+
+                const secondRowColumns = contentRows.at(1).find('td');
+                expect(secondRowColumns.at(0).text().trim()).toEqual('SSD');
+                expect(secondRowColumns.at(1).text().trim()).toEqual('100');
+                expect(secondRowColumns.at(2).text().trim()).toEqual('USD');
+
+                editButton = secondRowColumns.at(3).find('button');
+                expect(editButton.length).toEqual(1);
+                expect(editButton.text().trim()).toEqual('Delete');
             });
 
             describe('WHEN delete is invoked', () => {
                 it('opens the dialog and initializes selectedProduct', () => {
-                    const mockProps = {
-                        fetchProducts: jest.fn(),
-                        areLoading: false,
-                        products: products,
-                    };
-                    const wrapper = shallow(<HomeComponent {...mockProps} />);
-
-                    return new Promise((resolve) => setImmediate(resolve)).then(
-                        () => {
-                            expect(wrapper.state().isLoading).toEqual(false);
-                            expect(wrapper.state().hasReadPermissions).toEqual(
-                                true
-                            );
-                            const contentRows = wrapper.find(
-                                'table > tbody > tr'
-                            );
-                            const firstRowColumns = contentRows
-                                .at(0)
-                                .find('td');
-                            let editButton = firstRowColumns
-                                .at(3)
-                                .find('button');
-                            editButton.simulate('click');
-                            expect(wrapper.state().openDelete).toEqual(true);
-                            expect(wrapper.state().selectedProduct).toEqual(
-                                products[0]
-                            );
-                        }
-                    );
+                    const contentRows = wrapper.find('table > tbody > tr');
+                    const firstRowColumns = contentRows.at(0).find('td');
+                    let editButton = firstRowColumns.at(3).find('button');
+                    editButton.simulate('click');
+                    expect(
+                        wrapper.find('ModalComponent').props().modalTitle
+                    ).toEqual('Delete product');
+                    expect(
+                        wrapper.find('ModalComponent').props().submitButton
+                    ).toEqual('Delete');
+                    expect(
+                        wrapper.find('ModalComponent').props().submitBtnClass
+                    ).toEqual('danger-btn');
                 });
 
                 describe('WHEN the Delete dialog is opened', () => {
-                    let wrapper;
-                    let mockProps;
                     beforeEach(() => {
-                        mockProps = {
-                            fetchProducts: jest.fn(),
-                            areLoading: false,
-                            products: products,
-                        };
-                        wrapper = shallow(<HomeComponent {...mockProps} />);
-
-                        wrapper.setState({ openDelete: true });
+                        const contentRows = wrapper.find('table > tbody > tr');
+                        const firstRowColumns = contentRows.at(0).find('td');
+                        let editButton = firstRowColumns.at(3).find('button');
+                        editButton.simulate('click');
                     });
                     describe('WHEN closeDeleteModal is called', () => {
                         it('closes the modal', () => {
-                            const instance = wrapper.instance();
-                            instance.closeDeleteModal();
-                            expect(wrapper.state().openDelete).toEqual(false);
+                            wrapper.find('ModalComponent').props().onClose();
+                            wrapper.update();
+                            expect(
+                                wrapper.find('ModalComponent').exists()
+                            ).toEqual(false);
                         });
                     });
 
@@ -591,67 +318,65 @@ xdescribe('HomeComponent', () => {
                         });
 
                         describe('WHEN the product was not deleted', () => {
-                            it('called deleteProduct but not fecthProducts', () => {
+                            it('called deleteProduct', () => {
                                 productsService.deleteProduct.mockReturnValueOnce(
                                     new Promise((resolve) => {
                                         resolve(false);
                                     })
                                 );
-                                wrapper.setState({
-                                    selectedProduct: products[0],
-                                });
-                                const instance = wrapper.instance();
-                                mockProps.fetchProducts.mockClear();
-                                instance.submitDeleteModal();
-                                expect(wrapper.state().openDelete).toEqual(
-                                    false
-                                );
-                                expect(wrapper.state().isLoading).toEqual(true);
+                                wrapper
+                                    .find('ModalComponent')
+                                    .props()
+                                    .onSubmit();
+                                wrapper.update();
+                                expect(
+                                    wrapper.find('ModalComponent').exists()
+                                ).toEqual(false);
+                                expect(
+                                    wrapper.find('LoadingBar').exists()
+                                ).toEqual(true);
                                 expect(
                                     productsService.deleteProduct
                                 ).toHaveBeenCalledWith(products[0]);
                                 return new Promise((resolve) =>
                                     setImmediate(resolve)
                                 ).then(() => {
-                                    expect(wrapper.state().isLoading).toEqual(
-                                        false
-                                    );
+                                    wrapper.update();
                                     expect(
-                                        mockProps.fetchProducts
-                                    ).not.toHaveBeenCalled();
+                                        wrapper.find('LoadingBar').exists()
+                                    ).toEqual(false);
                                 });
                             });
                         });
 
                         describe('WHEN the product was deleted', () => {
-                            it('called deleteProduct and fecthProducts', () => {
+                            it('called deleteProduct', () => {
                                 productsService.deleteProduct.mockReturnValueOnce(
                                     new Promise((resolve) => {
                                         resolve(true);
                                     })
                                 );
-                                wrapper.setState({
-                                    selectedProduct: products[0],
-                                });
-                                const instance = wrapper.instance();
-                                mockProps.fetchProducts.mockClear();
-                                instance.submitDeleteModal();
-                                expect(wrapper.state().openDelete).toEqual(
-                                    false
-                                );
-                                expect(wrapper.state().isLoading).toEqual(true);
+                                wrapper
+                                    .find('ModalComponent')
+                                    .props()
+                                    .onSubmit();
+                                wrapper.update();
+                                expect(
+                                    wrapper.find('ModalComponent').exists()
+                                ).toEqual(false);
+                                expect(
+                                    wrapper.find('LoadingBar').exists()
+                                ).toEqual(true);
                                 expect(
                                     productsService.deleteProduct
                                 ).toHaveBeenCalledWith(products[0]);
                                 return new Promise((resolve) =>
                                     setImmediate(resolve)
                                 ).then(() => {
-                                    expect(wrapper.state().isLoading).toEqual(
-                                        false
-                                    );
+                                    wrapper.update();
                                     expect(
-                                        mockProps.fetchProducts
-                                    ).toHaveBeenCalled();
+                                        wrapper.find('LoadingBar').exists()
+                                    ).toEqual(false);
                                 });
                             });
                         });
