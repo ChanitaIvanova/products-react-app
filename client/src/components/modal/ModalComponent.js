@@ -64,6 +64,7 @@ const ModalComponent = ({
     useEffect(mountDialog, []);
     useEffect(() => {
         return unmountDialog;
+        // eslint-disable-next-line
     }, []);
     return null;
 };

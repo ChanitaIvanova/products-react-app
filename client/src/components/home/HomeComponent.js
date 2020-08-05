@@ -73,6 +73,7 @@ const Home = () => {
             }
             dispatch(fetchProducts());
         });
+        // eslint-disable-next-line
     }, [isUpdateFormValidRef, updatedProductRef]);
 
     /**
